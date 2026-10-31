@@ -1,16 +1,43 @@
-# React + Vite
+# Meesho Product Listing UI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A responsive frontend-only e-commerce demo inspired by Indian online shopping interfaces. Built with React, Vite, JavaScript and Tailwind CSS.
 
-Currently, two official plugins are available:
+## Features
+- 12 products rendered dynamically from static JavaScript data
+- Responsive product grid, search, hover effects and reusable components
+- Add to cart, quantity increase/decrease, remove items and totals
+- Cart persisted in browser `localStorage`
+- Checkout form with validation for name, Indian mobile number, address and 6-digit pincode
+- Simulated order confirmation with customer details, ordered products and total cost
+- No backend, API, payment gateway or real purchase
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Run locally
+```bash
+npm install
+npm run dev
+```
 
-## React Compiler
+## Production build
+```bash
+npm run build
+npm run preview
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Project structure
+```text
+src/
+  components/
+    Navbar.jsx
+    ProductCard.jsx
+    ProductList.jsx
+    Cart.jsx
+    Checkout.jsx
+    OrderConfirmation.jsx
+  App.jsx
+  products.js
+  index.css
+  main.jsx
+```
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Note
+This is a learning/demo project inspired by common e-commerce layouts. It is not affiliated with Meesho. Product images are loaded from Unsplash and therefore require an internet connection.

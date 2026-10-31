@@ -1,265 +1,96 @@
-
-import { useEffect, useState } from "react";
-
+import { useEffect, useMemo, useState } from "react";
+import products from "./data/products";
 import Navbar from "./components/Navbar";
 import ProductList from "./components/ProductList";
-import CartDrawer from "./components/CartDrawer";
-import CheckoutForm from "./components/CheckoutForm";
+import Cart from "./components/Cart";
+import Checkout from "./components/Checkout";
 import OrderConfirmation from "./components/OrderConfirmation";
 
-import productsData from "./data/products";
+const CART_KEY = "meesho-demo-cart";
+const ORDER_KEY = "meesho-demo-last-order";
 
-function App() {
-  const [products] = useState(productsData);
+function readCart() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+    if (!Array.isArray(saved)) return [];
+    return saved.filter((item) => products.some((p) => p.id === item.id))
+      .map((item) => {
+        const product = products.find((p) => p.id === item.id);
+        const quantity = Number.isInteger(item.quantity) && item.quantity > 0 ? item.quantity : 1;
+        return { ...product, quantity };
+      });
+  } catch { return []; }
+}
 
-  // Load cart from localStorage
-  const [cart, setCart] = useState(() => {
-    try {
-      const savedCart = localStorage.getItem("meeshoCart");
-      const parsed = savedCart ? JSON.parse(savedCart) : [];
-
-      if (!Array.isArray(parsed)) return [];
-
-      return parsed.filter(
-        (item) =>
-          item &&
-          Number.isInteger(item.id) &&
-          productsData.some((product) => product.id === item.id) &&
-          Number.isInteger(item.quantity) &&
-          item.quantity > 0
-      );
-    } catch {
-      return [];
-    }
-  });
-
-  const [search, setSearch] = useState("");
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [showCheckout, setShowCheckout] = useState(false);
-  const [showConfirmation, setShowConfirmation] = useState(false);
+export default function App() {
+  const [cart, setCart] = useState(readCart);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [order, setOrder] = useState(null);
+  const [search, setSearch] = useState("");
 
-  // Save cart whenever it changes
   useEffect(() => {
-    localStorage.setItem("meeshoCart", JSON.stringify(cart));
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
   }, [cart]);
 
-  // Add product
-  const addToCart = (product) => {
-    setCart((prevCart) => {
-      const existing = prevCart.find(
-        (item) => item.id === product.id
-      );
+  const visibleProducts = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    return products.filter((product) => `${product.title} ${product.category}`.toLowerCase().includes(query));
+  }, [search]);
 
-      if (existing) {
-        return prevCart.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      }
-
-      return [...prevCart, { ...product, quantity: 1 }];
+  function addToCart(product) {
+    setCart((current) => {
+      const found = current.find((item) => item.id === product.id);
+      if (found) return current.map((item) => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item);
+      return [...current, { ...product, quantity: 1 }];
     });
-  };
-
-  // Increase quantity
-  const increaseQuantity = (id) => {
-    setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.id === id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      )
-    );
-  };
-
-  // Decrease quantity
-  const decreaseQuantity = (id) => {
-    setCart((prevCart) =>
-      prevCart
-        .map((item) =>
-          item.id === id
-            ? { ...item, quantity: item.quantity - 1 }
-            : item
-        )
-        .filter((item) => item.quantity > 0)
-    );
-  };
-
-  // Remove product
-  const removeFromCart = (id) => {
-    setCart((prevCart) =>
-      prevCart.filter((item) => item.id !== id)
-    );
-  };
-
-  // Total cart items
-  const cartCount = cart.reduce(
-    (total, item) => total + item.quantity,
-    0
-  );
-
-  // Search
-  const filteredProducts = products.filter((product) =>
-    product.title.toLowerCase().includes(search.toLowerCase()) ||
-    product.category.toLowerCase().includes(search.toLowerCase())
-  );
-
-  // Checkout
-  const handleCheckout = () => {
-    if (cart.length === 0) return;
-
-    setIsCartOpen(false);
-    setShowCheckout(true);
-  };
-
-  // Place order
-  const handleOrderSubmit = (orderDetails) => {
-    setOrder(orderDetails);
+    setCartOpen(true);
+  }
+  function increase(id) { setCart((current) => current.map((item) => item.id === id ? { ...item, quantity: item.quantity + 1 } : item)); }
+  function decrease(id) { setCart((current) => current.map((item) => item.id === id ? { ...item, quantity: Math.max(1, item.quantity - 1) } : item)); }
+  function remove(id) { setCart((current) => current.filter((item) => item.id !== id)); }
+  function startCheckout() { setCartOpen(false); setCheckoutOpen(true); }
+  function placeOrder(customer) {
+    const nextOrder = { items: cart.map((item) => ({ ...item })), customer, createdAt: new Date().toISOString() };
+    setOrder(nextOrder);
+    try { localStorage.setItem(ORDER_KEY, JSON.stringify(nextOrder)); } catch {}
     setCart([]);
-    setShowCheckout(false);
-    setShowConfirmation(true);
-  };
+    setCheckoutOpen(false);
+  }
+  function continueShopping() { setOrder(null); setCartOpen(false); setCheckoutOpen(false); window.scrollTo({ top: 0, behavior: "smooth" }); }
 
-  // Continue shopping
-  const handleContinueShopping = () => {
-    setShowConfirmation(false);
-    setOrder(null);
-  };
-
+  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   return (
-    <div className="min-h-screen bg-gray-50">
-
-      {/* Navbar */}
-      <Navbar
-        cartCount={cartCount}
-        onCartClick={() => setIsCartOpen(true)}
-        search={search}
-        setSearch={setSearch}
-      />
-
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-pink-100 to-purple-100">
-
-        <div className="max-w-7xl mx-auto px-4 py-14 flex flex-col md:flex-row items-center justify-between gap-8">
-
-          <div className="max-w-xl">
-
-            <p className="text-pink-600 font-semibold mb-3">
-              WELCOME TO ONLINE SHOPPING
-            </p>
-
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
-              Discover Your
-              <span className="text-pink-600"> Style </span>
-              With Amazing Deals!
-            </h1>
-
-            <p className="text-gray-600 mt-4 text-lg">
-              Shop the latest fashion, footwear and accessories
-              at affordable prices.
-            </p>
-
-            <button
-              onClick={() =>
-                document.getElementById("products")?.scrollIntoView({
-                  behavior: "smooth",
-                })
-              }
-              className="mt-6 bg-pink-600 text-white px-7 py-3 rounded-lg font-bold hover:bg-pink-700 transition"
-            >
-              Shop Now →
-            </button>
-
+    <div className="min-h-screen">
+      <Navbar cartCount={cartCount} onCartClick={() => setCartOpen(true)} search={search} setSearch={setSearch} />
+      <main>
+        <section className="px-4 pt-5 sm:px-6 lg:px-8">
+          <div className="mx-auto flex max-w-7xl flex-col overflow-hidden rounded-3xl bg-gradient-to-r from-pink-100 via-rose-50 to-purple-100 md:flex-row">
+            <div className="flex flex-1 flex-col justify-center p-7 sm:p-10 lg:p-14">
+              <span className="w-fit rounded-full bg-white/80 px-3 py-1 text-xs font-bold uppercase tracking-wider text-pink-700">Everyday style, easy prices</span>
+              <h1 className="mt-4 max-w-xl text-3xl font-black leading-tight text-gray-900 sm:text-5xl">Find your style.<br /><span className="text-pink-600">Love your price.</span></h1>
+              <p className="mt-4 max-w-lg text-sm leading-6 text-gray-600 sm:text-base">Explore fashion, accessories and everyday essentials — all in one place.</p>
+              <a href="#products" className="mt-6 w-fit rounded-xl bg-pink-600 px-5 py-3 font-bold text-white shadow-lg shadow-pink-200 transition hover:-translate-y-0.5 hover:bg-pink-700">Explore Collection →</a>
+            </div>
+            <div className="flex min-h-48 flex-1 items-center justify-center bg-gradient-to-br from-pink-200/60 to-purple-200/60 p-6">
+              <div className="grid w-full max-w-sm grid-cols-2 gap-3">
+                <div className="rotate-[-3deg] overflow-hidden rounded-2xl bg-white p-2 shadow-lg"><img className="h-36 w-full rounded-xl object-cover sm:h-44" src={products[0].image} alt="Fashion collection" /><p className="px-1 py-2 text-sm font-bold">Ethnic styles</p></div>
+                <div className="mt-7 rotate-[3deg] overflow-hidden rounded-2xl bg-white p-2 shadow-lg"><img className="h-36 w-full rounded-xl object-cover sm:h-44" src={products[2].image} alt="Accessories collection" /><p className="px-1 py-2 text-sm font-bold">Everyday finds</p></div>
+              </div>
+            </div>
           </div>
-
-          <div className="text-8xl md:text-9xl">
-            🛍️
-          </div>
-
+        </section>
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-3 px-4 pt-5 sm:grid-cols-3 sm:px-6 lg:px-8">
+          <div className="rounded-xl border border-gray-100 bg-white p-4"><p className="font-bold">🚚 Convenient shopping</p><p className="mt-1 text-sm text-gray-500">Browse your favourites with ease</p></div>
+          <div className="rounded-xl border border-gray-100 bg-white p-4"><p className="font-bold">💗 Styles for everyone</p><p className="mt-1 text-sm text-gray-500">Discover fashion and essentials</p></div>
+          <div className="rounded-xl border border-gray-100 bg-white p-4"><p className="font-bold">🔒 Safe demo checkout</p><p className="mt-1 text-sm text-gray-500">No payment or real order is made</p></div>
         </div>
-      </section>
-
-      {/* Benefits */}
-      <section className="max-w-7xl mx-auto px-4 py-6">
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-
-          <div className="bg-white p-4 rounded-lg text-center shadow-sm">
-            <p className="text-2xl">🚚</p>
-            <h3 className="font-bold mt-2">Free Delivery</h3>
-            <p className="text-sm text-gray-500">On selected orders</p>
-          </div>
-
-          <div className="bg-white p-4 rounded-lg text-center shadow-sm">
-            <p className="text-2xl">💰</p>
-            <h3 className="font-bold mt-2">Best Prices</h3>
-            <p className="text-sm text-gray-500">Affordable products</p>
-          </div>
-
-          <div className="bg-white p-4 rounded-lg text-center shadow-sm">
-            <p className="text-2xl">⭐</p>
-            <h3 className="font-bold mt-2">Quality Products</h3>
-            <p className="text-sm text-gray-500">Customer satisfaction</p>
-          </div>
-
-        </div>
-      </section>
-
-      {/* Products */}
-      <div id="products">
-        <ProductList
-          products={filteredProducts}
-          onAddToCart={addToCart}
-        />
-      </div>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white text-center py-8 mt-10">
-        <h2 className="text-2xl font-bold text-pink-400">
-          meesho.
-        </h2>
-
-        <p className="text-gray-400 mt-2">
-          Your Favourite Online Shopping Destination
-        </p>
-
-        <p className="text-gray-500 text-sm mt-4">
-          © 2026 Meesho UI Project. Frontend Demo Only.
-        </p>
-      </footer>
-
-      {/* Cart */}
-      <CartDrawer
-        cart={cart}
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        onIncrease={increaseQuantity}
-        onDecrease={decreaseQuantity}
-        onRemove={removeFromCart}
-        onCheckout={handleCheckout}
-      />
-
-      {/* Checkout */}
-      {showCheckout && (
-        <CheckoutForm
-          cart={cart}
-          onSubmit={handleOrderSubmit}
-          onClose={() => setShowCheckout(false)}
-        />
-      )}
-
-      {/* Order Confirmation */}
-      {showConfirmation && (
-        <OrderConfirmation
-          order={order}
-          onClose={handleContinueShopping}
-        />
-      )}
-
+        <ProductList products={visibleProducts} onAdd={addToCart} />
+      </main>
+      <footer className="border-t bg-white px-4 py-7 text-center text-sm text-gray-500">© 2026 Meesho Store UI Demo · Built with React & Tailwind CSS · Not affiliated with Meesho</footer>
+      {cartOpen && <Cart cart={cart} onClose={() => setCartOpen(false)} onIncrease={increase} onDecrease={decrease} onRemove={remove} onCheckout={startCheckout} />}
+      {checkoutOpen && <Checkout cart={cart} onBack={() => { setCheckoutOpen(false); setCartOpen(true); }} onSubmit={placeOrder} />}
+      {order && <OrderConfirmation order={order} onContinue={continueShopping} />}
     </div>
   );
 }
-
-export default App;

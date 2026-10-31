@@ -1,40 +1,15 @@
-
 import ProductCard from "./ProductCard";
 
-function ProductList({ products, onAddToCart }) {
+export default function ProductList({ products, onAdd }) {
   return (
-    <section className="max-w-7xl mx-auto px-4 py-10">
-
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">
-          Products For You
-        </h2>
-
-        <span className="text-gray-500">
-          {products.length} Products
-        </span>
-      </div>
-
-      {products.length === 0 ? (
-        <p className="text-center py-16 text-gray-500">
-          No products found.
-        </p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-
-          {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onAddToCart={onAddToCart}
-            />
-          ))}
-
+    <section id="products" className="px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+          <div><p className="text-sm font-bold uppercase tracking-[0.18em] text-pink-600">Fresh finds, happy prices</p><h2 className="mt-1 text-2xl font-extrabold text-gray-900 sm:text-3xl">Products For You</h2></div>
+          <p className="text-sm text-gray-500">{products.length} products</p>
         </div>
-      )}
-
+        {products.length ? <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-4">{products.map((product) => <ProductCard key={product.id} product={product} onAdd={onAdd} />)}</div> : <div className="rounded-2xl border border-dashed bg-white p-12 text-center text-gray-500">No products found. Try another search.</div>}
+      </div>
     </section>
   );
 }
-
-export default ProductList;

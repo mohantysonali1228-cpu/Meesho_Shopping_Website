@@ -1,92 +1,20 @@
-
-function OrderConfirmation({ order, onClose }) {
-  if (!order) return null;
-
+export default function OrderConfirmation({ order, onContinue }) {
+  const total = order.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   return (
-    <div className="fixed inset-0 bg-black/50 z-[70] flex items-center justify-center p-4">
-
-      <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
-
-        <div className="text-center">
-          <div className="text-6xl mb-3">✅</div>
-
-          <h2 className="text-2xl font-bold text-green-600">
-            Order Placed Successfully!
-          </h2>
-
-          <p className="text-gray-600 mt-2">
-            Thank you for shopping with us!
-          </p>
-
-          <p className="text-sm text-gray-500 mt-2">
-            Order ID: {order.orderId}
-          </p>
+    <div className="fixed inset-0 z-[60] overflow-y-auto bg-black/40 p-3 sm:p-6">
+      <section role="dialog" aria-modal="true" aria-labelledby="order-title" className="mx-auto my-5 max-w-2xl rounded-2xl bg-white p-5 shadow-2xl sm:p-8">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-3xl text-green-700">✓</div>
+        <h2 id="order-title" className="mt-4 text-center text-2xl font-extrabold text-gray-900">Order Confirmed!</h2>
+        <p className="mt-2 text-center font-semibold text-pink-600">Thank you for shopping with us!</p>
+        <p className="mt-2 text-center text-sm text-gray-500">Your demo order has been placed successfully.</p>
+        <div className="mt-6 rounded-xl border p-4"><h3 className="mb-3 font-bold">Order summary</h3>
+          {order.items.map((item) => <div key={item.id} className="flex justify-between gap-3 border-b py-2 text-sm last:border-0"><span>{item.title} × {item.quantity}</span><span className="shrink-0 font-semibold">₹{(item.price * item.quantity).toLocaleString("en-IN")}</span></div>)}
+          <div className="mt-3 flex justify-between border-t pt-3 text-lg font-extrabold"><span>Total order cost</span><span>₹{total.toLocaleString("en-IN")}</span></div>
         </div>
-
-        <div className="bg-gray-50 rounded-xl p-4 mt-6">
-          <h3 className="font-bold text-lg mb-3">
-            Customer Information
-          </h3>
-
-          <p><b>Name:</b> {order.customer.fullName}</p>
-          <p><b>Mobile:</b> {order.customer.mobile}</p>
-          <p><b>Address:</b> {order.customer.address}</p>
-          <p><b>Pincode:</b> {order.customer.pincode}</p>
-        </div>
-
-        <div className="mt-5">
-          <h3 className="font-bold text-lg mb-3">
-            Ordered Products
-          </h3>
-
-          {order.items.map((item) => (
-            <div
-              key={item.id}
-              className="flex justify-between items-center border-b py-3 gap-3"
-            >
-              <div className="flex gap-3 items-center">
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  className="w-14 h-14 object-cover rounded-lg"
-                />
-
-                <div>
-                  <p className="font-medium">{item.title}</p>
-                  <p className="text-sm text-gray-500">
-                    Quantity: {item.quantity}
-                  </p>
-                </div>
-              </div>
-
-              <p className="font-bold whitespace-nowrap">
-                ₹{(item.price * item.quantity).toLocaleString("en-IN")}
-              </p>
-            </div>
-          ))}
-        </div>
-
-        <div className="flex justify-between text-xl font-bold mt-5">
-          <span>Total Amount</span>
-          <span className="text-pink-600">
-            ₹{order.totalPrice.toLocaleString("en-IN")}
-          </span>
-        </div>
-
-        <p className="text-sm text-gray-500 mt-3">
-          Order Date: {order.orderDate}
-        </p>
-
-        <button
-          onClick={onClose}
-          className="w-full bg-pink-600 text-white py-3 rounded-lg font-bold mt-6 hover:bg-pink-700"
-        >
-          Continue Shopping
-        </button>
-
-      </div>
+        <div className="mt-4 rounded-xl bg-gray-50 p-4"><h3 className="mb-2 font-bold">Delivery information</h3><p className="text-sm">{order.customer.fullName}</p><p className="text-sm text-gray-600">{order.customer.mobile}</p><p className="mt-1 text-sm text-gray-600">{order.customer.address}, {order.customer.pincode}</p></div>
+        <p className="mt-4 rounded-xl bg-amber-50 p-3 text-center text-xs text-amber-800">Note: This is a simulated order. No actual purchase or payment will be processed.</p>
+        <button onClick={onContinue} className="mt-5 w-full rounded-xl bg-pink-600 py-3 font-bold text-white transition hover:bg-pink-700">Continue Shopping</button>
+      </section>
     </div>
   );
 }
-
-export default OrderConfirmation;

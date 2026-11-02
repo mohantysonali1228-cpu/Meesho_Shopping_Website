@@ -1,15 +1,31 @@
-const products = [
-  { id: 1, title: "Women's Floral Kurti", category: "Ethnic Wear", price: 499, rating: 4.3, image: "https://images.unsplash.com/photo-1583391733956-6c78276477e3?w=600&auto=format&fit=crop&q=80" },
-  { id: 2, title: "Elegant Printed Saree", category: "Ethnic Wear", price: 699, rating: 4.5, image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&auto=format&fit=crop&q=80" },
-  { id: 3, title: "Everyday Handbag", category: "Accessories", price: 399, rating: 4.1, image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&auto=format&fit=crop&q=80" },
-  { id: 4, title: "Women's Party Dress", category: "Western Wear", price: 599, rating: 4.4, image: "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?w=600&auto=format&fit=crop&q=80" },
-  { id: 5, title: "Everyday Sneakers", category: "Footwear", price: 799, rating: 4.2, image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop&q=80" },
-  { id: 6, title: "Classic Wrist Watch", category: "Accessories", price: 549, rating: 4.0, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80" },
-  { id: 7, title: "Modern Sunglasses", category: "Accessories", price: 249, rating: 4.1, image: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600&auto=format&fit=crop&q=80" },
-  { id: 8, title: "Women's Casual Shoes", category: "Footwear", price: 649, rating: 4.3, image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=600&auto=format&fit=crop&q=80" },
-  { id: 9, title: "Minimal Gold Earrings", category: "Jewellery", price: 199, rating: 4.6, image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=600&auto=format&fit=crop&q=80" },
-  { id: 10, title: "Cozy Home Cushion", category: "Home", price: 299, rating: 4.2, image: "https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?w=600&auto=format&fit=crop&q=80" },
-  { id: 11, title: "Daily Backpack", category: "Bags", price: 599, rating: 4.4, image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&auto=format&fit=crop&q=80" },
-  { id: 12, title: "Classic White Sneakers", category: "Footwear", price: 899, rating: 4.5, image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=600&auto=format&fit=crop&q=80" }
+
+export const products = [
+  { id: 1, name: "Women Printed Straight Kurta", category: "Women Ethnic", price: 399, old: 899, rating: 4.2, reviews: 1240, tag: "Bestseller", img: "https://images.unsplash.com/photo-1583391733956-6c78276477e3?w=700" },
+  { id: 2, name: "Elegant Floral Printed Saree", category: "Women Ethnic", price: 599, old: 1299, rating: 4.1, reviews: 842, tag: "Trending", img: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=700" },
+  { id: 3, name: "Casual Men's Cotton Shirt", category: "Men", price: 449, old: 999, rating: 4.0, reviews: 523, tag: "New", img: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=700" },
+  { id: 4, name: "Stylish Women's Handbag", category: "Accessories", price: 349, old: 799, rating: 4.3, reviews: 2110, tag: "Bestseller", img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=700" },
+  { id: 5, name: "Minimal Gold-Plated Earrings", category: "Jewellery", price: 199, old: 499, rating: 4.1, reviews: 678, tag: "Trending", img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=700" },
+  { id: 6, name: "Women's Casual Sneakers", category: "Footwear", price: 499, old: 1199, rating: 4.0, reviews: 387, tag: "Popular", img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=700" },
+  { id: 7, name: "Home Decorative Cushion Set", category: "Home & Kitchen", price: 299, old: 699, rating: 4.4, reviews: 930, tag: "Deal", img: "https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?w=700" },
+  { id: 8, name: "Classic Analog Wrist Watch", category: "Accessories", price: 549, old: 1499, rating: 4.2, reviews: 1200, tag: "Bestseller", img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=700" },
+  { id: 9, name: "Premium Women's Top", category: "Women Western", price: 279, old: 649, rating: 4.0, reviews: 318, tag: "New", img: "https://images.unsplash.com/photo-1551163943-3f6a855d1153?w=700" },
+  { id: 10, name: "Kids Casual Outfit Set", category: "Kids", price: 399, old: 899, rating: 4.3, reviews: 254, tag: "Popular", img: "https://images.unsplash.com/photo-1519238263530-99ikovc2b3b2?w=700" },
+  { id: 11, name: "Wireless Bluetooth Earbuds", category: "Electronics", price: 699, old: 1999, rating: 3.9, reviews: 1740, tag: "Deal", img: "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=700" },
+  { id: 12, name: "Kitchen Storage Organizer", category: "Home & Kitchen", price: 249, old: 599, rating: 4.2, reviews: 489, tag: "Trending", img: "https://images.unsplash.com/photo-1556911220-bff31c812dba?w=700" }
 ];
-export default products;
+
+export const categories = [
+  "Women Ethnic",
+  "Women Western",
+  "Men",
+  "Kids",
+  "Home & Kitchen",
+  "Beauty",
+  "Jewellery",
+  "Footwear",
+  "Accessories",
+  "Electronics"
+];
+
+export const money = (amount) =>
+  `₹${amount.toLocaleString("en-IN")}`;

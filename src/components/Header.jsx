@@ -87,16 +87,6 @@ function Header({ cart = [], wishlist = [], user }) {
           {/* Desktop Actions */}
           <div className="hidden lg:flex items-center gap-6">
 
-            <button
-              type="button"
-              className="flex items-center gap-2 text-gray-700 hover:text-pink-600 transition-colors"
-            >
-              <Smartphone size={21} />
-              <span className="text-sm font-medium whitespace-nowrap">
-                Download App
-              </span>
-            </button>
-
             <NavLink to="/profile" className={navLinkClass}>
               <UserRound size={22} />
               <span>{user?.name?.split(" ")[0] || "Profile"}</span>
@@ -218,13 +208,6 @@ function Header({ cart = [], wishlist = [], user }) {
               Cart ({cartCount})
             </NavLink>
 
-            <button
-              type="button"
-              className="flex items-center gap-2 text-sm text-gray-700 hover:text-pink-600"
-            >
-              <Smartphone size={21} />
-              Download App
-            </button>
 
             <div className="border-t border-gray-200 pt-4">
 

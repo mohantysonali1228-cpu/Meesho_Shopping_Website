@@ -61,7 +61,7 @@ function Home({ addToCart, wishlist, toggleWish }) {
     <main className="min-h-screen bg-gray-50">
       {/* HERO SECTION */}
       <section className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <div className="relative grid overflow-hidden rounded-3xl bg-gradient-to-r from-pink-100 via-rose-50 to-orange-100 shadow-sm md:grid-cols-2">
+        <div className="relative grid overflow-hidden rounded-3xl bg-gradient-to-r from-pink-600 via-rose-50 to-orange-120 shadow-sm md:grid-cols-2">
           
           {/* Hero Content */}
           <div className="relative z-10 flex flex-col justify-center px-6 py-12 sm:px-10 md:px-14 md:py-20">
@@ -78,7 +78,7 @@ function Home({ addToCart, wishlist, toggleWish }) {
               </span>
             </h1>
 
-            <p className="mt-5 max-w-md text-base leading-7 text-gray-600 sm:text-lg">
+            <p className="mt-5 max-w-md text-base leading-7 text-gray-800 sm:text-lg">
               Discover the latest trends at prices you'll love.
               Shop fashion, beauty, home essentials and more!
             </p>

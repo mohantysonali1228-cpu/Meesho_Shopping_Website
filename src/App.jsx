@@ -15,6 +15,7 @@ import ProductDetails from "./pages/ProductDetails";
 import Cart from "./pages/Cart";
 import Wishlist from "./pages/Wishlist";
 import Profile from "./pages/Profile";
+import Order from "./pages/Order";
 
 // Read data from localStorage
 const read = (key, fallback) => {
@@ -28,24 +29,27 @@ const read = (key, fallback) => {
 };
 
 function App() {
+  // Cart state
   const [cart, setCart] = useState(() =>
     read("meesho_cart", [])
   );
 
+  // Wishlist state
   const [wishlist, setWishlist] = useState(() =>
     read("meesho_wishlist", [])
   );
 
+  // User state
   const [user, setUser] = useState(() =>
     read("meesho_user", null)
   );
 
-  // Save cart
+  // Save cart to localStorage
   useEffect(() => {
     localStorage.setItem("meesho_cart", JSON.stringify(cart));
   }, [cart]);
 
-  // Save wishlist
+  // Save wishlist to localStorage
   useEffect(() => {
     localStorage.setItem(
       "meesho_wishlist",
@@ -53,7 +57,7 @@ function App() {
     );
   }, [wishlist]);
 
-  // Save user
+  // Save user to localStorage
   useEffect(() => {
     if (user) {
       localStorage.setItem("meesho_user", JSON.stringify(user));
@@ -62,7 +66,7 @@ function App() {
     }
   }, [user]);
 
-  // Add to cart
+  // Add product to cart
   const addToCart = (product, qty = 1) => {
     setCart((oldCart) => {
       const existing = oldCart.find(
@@ -81,25 +85,28 @@ function App() {
     });
   };
 
-  // Change quantity
+  // Change product quantity
   const changeQty = (id, delta) => {
     setCart((oldCart) =>
       oldCart.map((item) =>
         item.id === id
-          ? { ...item, qty: Math.max(1, (item.qty || 1) + delta) }
+          ? {
+              ...item,
+              qty: Math.max(1, (item.qty || 1) + delta),
+            }
           : item
       )
     );
   };
 
-  // Remove from cart
+  // Remove product from cart
   const removeCart = (id) => {
     setCart((oldCart) =>
       oldCart.filter((item) => item.id !== id)
     );
   };
 
-  // Add or remove wishlist
+  // Add or remove product from wishlist
   const toggleWish = (product) => {
     setWishlist((oldWishlist) =>
       oldWishlist.some((item) => item.id === product.id)
@@ -108,7 +115,7 @@ function App() {
     );
   };
 
-  // Shared props
+  // Shared props for all pages
   const shared = {
     cart,
     wishlist,
@@ -125,41 +132,70 @@ function App() {
       <Header {...shared} />
 
       <Routes>
-        <Route path="/" element={<Home {...shared} />} />
+        {/* Home */}
+        <Route
+          path="/"
+          element={<Home {...shared} />}
+        />
 
+        {/* Product Category */}
         <Route
           path="/category/:category"
           element={<Listing {...shared} />}
         />
 
+        {/* Product Details */}
         <Route
           path="/product/:id"
           element={<ProductDetails {...shared} />}
         />
 
-        <Route path="/cart" element={<Cart {...shared} />} />
+        {/* Cart */}
+        <Route
+          path="/cart"
+          element={<Cart {...shared} />}
+        />
 
+        {/* Wishlist */}
         <Route
           path="/wishlist"
           element={<Wishlist {...shared} />}
         />
 
+        {/* Login */}
         <Route
           path="/login"
           element={<Login setUser={setUser} />}
         />
 
+        {/* Register */}
         <Route
           path="/register"
           element={<Register setUser={setUser} />}
         />
 
+        {/* Profile */}
         <Route
           path="/profile"
           element={<Profile {...shared} />}
         />
 
-        <Route path="*" element={<Home {...shared} />} />
+        {/* Order Checkout */}
+        <Route
+          path="/order"
+          element={
+            <Order
+              cart={cart}
+              removeCart={removeCart}
+            />
+          }
+        />
+
+        {/* Page Not Found */}
+        <Route
+          path="*"
+          element={<Home {...shared} />}
+        />
       </Routes>
 
       <Footer />

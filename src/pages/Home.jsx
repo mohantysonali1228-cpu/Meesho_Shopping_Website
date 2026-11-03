@@ -44,6 +44,7 @@ function Home({ addToCart, wishlist, toggleWish }) {
     );
   }, [filter, sort, search]);
 
+  // Category emojis
   const emojis = [
     "👗",
     "👚",
@@ -55,30 +56,42 @@ function Home({ addToCart, wishlist, toggleWish }) {
     "👟",
     "👜",
     "🎧",
+    "📚",
+    "⌚",
   ];
+
+  // Show correct emoji for Books and Watches
+  const getCategoryEmoji = (category, index) => {
+    const name = category.toLowerCase();
+
+    if (name.includes("book")) return "📚";
+    if (name.includes("watch")) return "⌚";
+
+    return emojis[index % 10];
+  };
 
   return (
     <main className="min-h-screen bg-gray-50">
+
       {/* HERO SECTION */}
       <section className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <div className="relative grid overflow-hidden rounded-3xl bg-gradient-to-r from-pink-600 via-rose-50 to-orange-120 shadow-sm md:grid-cols-2">
-          
-          {/* Hero Content */}
+        <div className="relative grid overflow-hidden rounded-3xl bg-gradient-to-r from-pink-600 via-rose-70 to-orange-100 shadow-sm md:grid-cols-2">
+
           <div className="relative z-10 flex flex-col justify-center px-6 py-12 sm:px-10 md:px-14 md:py-20">
             <div className="mb-5 flex w-fit items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-bold tracking-widest text-pink-600 shadow-sm">
-              <Sparkles size={15} />
+              {/* <Sparkles size={15} /> */}
               MEESHO MEGA SAVINGS
             </div>
 
             <h1 className="text-4xl font-extrabold leading-tight text-gray-900 sm:text-5xl lg:text-6xl">
               Style that speaks.
               <br />
-              <span className="italic text-pink-600">
+              <span className="italic text-pink-800">
                 Prices that smile.
               </span>
             </h1>
 
-            <p className="mt-5 max-w-md text-base leading-7 text-gray-800 sm:text-lg">
+            <p className="mt-5 max-w-md text-base leading-7 text-gray-900 sm:text-lg">
               Discover the latest trends at prices you'll love.
               Shop fashion, beauty, home essentials and more!
             </p>
@@ -101,7 +114,7 @@ function Home({ addToCart, wishlist, toggleWish }) {
             </a>
           </div>
 
-          {/* Hero Image */}
+          {/* HERO IMAGE */}
           <div className="relative flex min-h-[280px] items-center justify-center p-6 sm:min-h-[380px] md:min-h-[500px]">
             <div className="absolute h-64 w-64 rounded-full bg-pink-300/40 blur-2xl sm:h-80 sm:w-80" />
 
@@ -126,6 +139,7 @@ function Home({ addToCart, wishlist, toggleWish }) {
       {/* BENEFITS SECTION */}
       <section className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:grid-cols-3">
+
           <div className="flex items-center gap-4 p-2">
             <div className="rounded-xl bg-pink-50 p-3 text-pink-600">
               <Truck size={27} />
@@ -164,9 +178,11 @@ function Home({ addToCart, wishlist, toggleWish }) {
           <p className="mb-2 text-xs font-bold tracking-[0.2em] text-pink-600">
             EXPLORE THE COLLECTION
           </p>
+
           <h2 className="text-2xl font-extrabold text-gray-900 sm:text-3xl">
             Shop by Category
           </h2>
+
           <p className="mt-2 text-sm text-gray-500">
             Explore our collections and find something you love.
           </p>
@@ -180,7 +196,7 @@ function Home({ addToCart, wishlist, toggleWish }) {
               className="group flex flex-col items-center justify-center rounded-2xl border border-gray-100 bg-white p-5 text-center shadow-sm transition hover:-translate-y-1 hover:border-pink-200 hover:shadow-md"
             >
               <span className="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-pink-50 text-4xl transition group-hover:scale-110">
-                {emojis[index % emojis.length]}
+                {getCategoryEmoji(category, index)}
               </span>
 
               <b className="text-sm font-bold text-gray-800 transition group-hover:text-pink-600">
@@ -196,7 +212,6 @@ function Home({ addToCart, wishlist, toggleWish }) {
         id="products"
         className="mx-auto max-w-7xl scroll-mt-28 px-4 py-10 sm:px-6 lg:px-8"
       >
-        {/* Heading and Sort */}
         <div className="mb-6 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
           <div>
             <p className="mb-2 text-xs font-bold tracking-[0.2em] text-pink-600">
@@ -227,7 +242,7 @@ function Home({ addToCart, wishlist, toggleWish }) {
           </div>
         </div>
 
-        {/* Filter Tabs */}
+        {/* FILTER TABS */}
         <div className="mb-7 flex gap-2 overflow-x-auto pb-3">
           {["All", ...categories].map((category) => (
             <button
@@ -244,7 +259,7 @@ function Home({ addToCart, wishlist, toggleWish }) {
           ))}
         </div>
 
-        {/* Product Grid */}
+        {/* PRODUCT GRID */}
         {list.length > 0 ? (
           <>
             <p className="mb-4 text-sm text-gray-500">

@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import {
   Heart,
@@ -11,6 +10,7 @@ import ProductCard from "../components/ProductCard";
 
 function Wishlist({
   wishlist = [],
+  cart = [],
   addToCart,
   toggleWish,
 }) {
@@ -77,6 +77,7 @@ function Wishlist({
                   key={product.id}
                   product={product}
                   addToCart={addToCart}
+                  cart={cart}
                   wishlist={wishlist}
                   toggleWish={toggleWish}
                 />

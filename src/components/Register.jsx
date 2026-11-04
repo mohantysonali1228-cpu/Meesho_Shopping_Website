@@ -120,7 +120,7 @@ function Register({ setUser }) {
               </div>
 
               <div className="mb-4 flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-pink-100">
-                <Sparkles size={18} />
+                {/* <Sparkles size={18} /> */}
                 Join Our Community
               </div>
 

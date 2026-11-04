@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -85,7 +84,7 @@ function Login({ setUser }) {
               </div>
 
               <div className="mb-4 flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-pink-100">
-                <Sparkles size={18} />
+                {/* <Sparkles size={18} /> */}
                 Welcome Back
               </div>
 

@@ -1,4 +1,3 @@
-
 import { Link, useParams } from "react-router-dom";
 import { products } from "../data/products";
 import ProductCard from "../components/ProductCard";
@@ -86,7 +85,7 @@ function Listing(props) {
 
           {/* PRODUCT GRID */}
           {items.length > 0 ? (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
               {items.map((product) => (
                 <ProductCard
                   key={product.id}

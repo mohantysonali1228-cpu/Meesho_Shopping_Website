@@ -1,16 +1,20 @@
-
 import { useState } from "react";
 import {
   Search,
   UserRound,
   ShoppingCart,
   Heart,
-  Smartphone,
   Menu,
   X,
 } from "lucide-react";
 
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import {
+  Link,
+  NavLink,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
+
 import { categories } from "../data/products";
 
 function Header({ cart = [], wishlist = [], user }) {
@@ -18,6 +22,14 @@ function Header({ cart = [], wishlist = [], user }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Hide only category navigation on these pages
+  const hideCategories = [
+    "/profile",
+    "/login",
+    "/register",
+  ].includes(location.pathname);
 
   const cartCount = cart.reduce(
     (sum, item) => sum + (item.qty || 0),
@@ -31,6 +43,7 @@ function Header({ cart = [], wishlist = [], user }) {
 
     if (query.trim()) {
       navigate(`/?search=${encodeURIComponent(query.trim())}`);
+      setMobileOpen(false);
     }
   };
 
@@ -44,7 +57,7 @@ function Header({ cart = [], wishlist = [], user }) {
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-200">
 
-      {/* Main Header */}
+      {/* Main Navbar - Always Visible */}
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
 
         <div className="h-20 flex items-center justify-between gap-5">
@@ -57,7 +70,7 @@ function Header({ cart = [], wishlist = [], user }) {
             meesho<span className="text-purple-600">.</span>
           </Link>
 
-          {/* Search Box */}
+          {/* Desktop Search */}
           <form
             onSubmit={submit}
             className="hidden md:flex flex-1 max-w-xl items-center gap-3 px-4 h-12 border border-gray-300 rounded-lg bg-gray-50 focus-within:border-pink-500 focus-within:bg-white transition-all"
@@ -95,6 +108,7 @@ function Header({ cart = [], wishlist = [], user }) {
             <NavLink to="/wishlist" className={navLinkClass}>
               <span className="relative">
                 <Heart size={22} />
+
                 {wishlistCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-pink-600 text-white text-[10px] rounded-full min-w-4 h-4 flex items-center justify-center px-1">
                     {wishlistCount}
@@ -107,6 +121,7 @@ function Header({ cart = [], wishlist = [], user }) {
             <NavLink to="/cart" className={navLinkClass}>
               <span className="relative">
                 <ShoppingCart size={22} />
+
                 {cartCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-pink-600 text-white text-[10px] rounded-full min-w-4 h-4 flex items-center justify-center px-1">
                     {cartCount}
@@ -159,23 +174,25 @@ function Header({ cart = [], wishlist = [], user }) {
       </div>
 
       {/* Desktop Category Navigation */}
-      <nav className="hidden lg:block border-t border-gray-100">
-        <div className="max-w-7xl mx-auto px-8 flex items-center justify-between gap-5 overflow-x-auto">
+      {!hideCategories && (
+        <nav className="hidden lg:block border-t border-gray-100">
+          <div className="max-w-7xl mx-auto px-8 flex items-center justify-between gap-5 overflow-x-auto">
 
-          {categories.map((category) => (
-            <Link
-              key={category}
-              to={`/category/${encodeURIComponent(category)}`}
-              className="py-4 text-sm text-gray-700 font-medium whitespace-nowrap hover:text-pink-600 hover:border-b-2 hover:border-pink-600 transition-all"
-            >
-              {category}
-            </Link>
-          ))}
+            {categories.map((category) => (
+              <Link
+                key={category}
+                to={`/category/${encodeURIComponent(category)}`}
+                className="py-4 text-sm text-gray-700 font-medium whitespace-nowrap hover:text-pink-600 hover:border-b-2 hover:border-pink-600 transition-all"
+              >
+                {category}
+              </Link>
+            ))}
 
-        </div>
-      </nav>
+          </div>
+        </nav>
+      )}
 
-      {/* Mobile Navigation */}
+      {/* Mobile Menu */}
       {mobileOpen && (
         <div className="lg:hidden bg-white border-t border-gray-200 shadow-lg">
 
@@ -208,28 +225,30 @@ function Header({ cart = [], wishlist = [], user }) {
               Cart ({cartCount})
             </NavLink>
 
+            {/* Mobile Categories - Hidden on Profile/Login/Register */}
+            {!hideCategories && (
+              <div className="border-t border-gray-200 pt-4">
 
-            <div className="border-t border-gray-200 pt-4">
+                <h3 className="font-bold text-gray-900 mb-4">
+                  Shop By Category
+                </h3>
 
-              <h3 className="font-bold text-gray-900 mb-4">
-                Shop By Category
-              </h3>
+                <div className="grid grid-cols-2 gap-4">
 
-              <div className="grid grid-cols-2 gap-4">
+                  {categories.map((category) => (
+                    <Link
+                      key={category}
+                      to={`/category/${encodeURIComponent(category)}`}
+                      onClick={() => setMobileOpen(false)}
+                      className="text-sm text-gray-600 hover:text-pink-600 transition-colors"
+                    >
+                      {category}
+                    </Link>
+                  ))}
 
-                {categories.map((category) => (
-                  <Link
-                    key={category}
-                    to={`/category/${encodeURIComponent(category)}`}
-                    onClick={() => setMobileOpen(false)}
-                    className="text-sm text-gray-600 hover:text-pink-600 transition-colors"
-                  >
-                    {category}
-                  </Link>
-                ))}
-
+                </div>
               </div>
-            </div>
+            )}
 
           </div>
         </div>

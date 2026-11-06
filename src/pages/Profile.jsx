@@ -515,14 +515,16 @@ function Profile({
           <div className="py-8 text-center">
 
             {/* MEESHO LOGO INSIDE ROUNDED CIRCLE */}
-           {/* MEESHO LOGO INSIDE ROUNDED CIRCLE */}
-<div className="mx-auto mb-5 flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-2 border-pink-200 bg-[#5B0B4A] shadow-md">
-  <img
-    src="\assets\image.png"
-    alt="Meesho Logo"
-    className="h-full w-full rounded-full object-contain p-1"
-  />
-</div>
+            <div className="mx-auto mb-5 flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border-2 border-pink-100 bg-pink-50 shadow-sm">
+              <img
+                src="\assets\image.png"
+                alt="Meesho Logo"
+                className="h-20 w-20 rounded-full object-contain"
+                onError={(e) => {
+                  e.currentTarget.style.display = "none";
+                }}
+              />
+            </div>
 
             <h2 className="text-2xl font-extrabold text-gray-900">
               Welcome to Meesho!

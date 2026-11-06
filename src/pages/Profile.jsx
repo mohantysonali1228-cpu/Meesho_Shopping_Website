@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -8,12 +9,12 @@ import {
   CheckCircle2,
   ArrowRight,
   ShieldCheck,
+  Star,
   Package,
   Plus,
   Pencil,
   Trash2,
   X,
-  Star,
   ChevronDown,
   ChevronUp,
   Camera,
@@ -23,9 +24,7 @@ import {
 } from "lucide-react";
 
 const getProfileKey = (email) =>
-  `meesho_profile_${String(email || "")
-    .trim()
-    .toLowerCase()}`;
+  `meesho_profile_${String(email || "").trim().toLowerCase()}`;
 
 function Profile({
   user,
@@ -62,9 +61,13 @@ function Profile({
 
   const emailKey = user?.email?.trim().toLowerCase() || "";
 
-  const addressKey = emailKey ? `addressBook_${emailKey}` : "addressBook_guest";
+  const addressKey = emailKey
+    ? `addressBook_${emailKey}`
+    : "addressBook_guest";
 
-  const photoKey = emailKey ? `meesho_profile_photo_${emailKey}` : null;
+  const photoKey = emailKey
+    ? `meesho_profile_photo_${emailKey}`
+    : null;
 
   const contactNumber =
     user?.phone ||
@@ -76,7 +79,7 @@ function Profile({
 
   const initial = user?.name?.charAt(0).toUpperCase() || "U";
 
-  // SAVE PROFILE DATA PERMANENTLY
+  // SAVE PROFILE DATA
   const saveProfileData = (updatedUser) => {
     const email = updatedUser?.email?.trim().toLowerCase();
 
@@ -94,7 +97,10 @@ function Profile({
       profilePhoto: updatedUser.profilePhoto || photo || "",
     };
 
-    localStorage.setItem(getProfileKey(email), JSON.stringify(profileData));
+    localStorage.setItem(
+      getProfileKey(email),
+      JSON.stringify(profileData)
+    );
   };
 
   // LOAD ADDRESS BOOK
@@ -105,7 +111,9 @@ function Profile({
     }
 
     try {
-      const saved = JSON.parse(localStorage.getItem(addressKey) || "[]");
+      const saved = JSON.parse(
+        localStorage.getItem(addressKey) || "[]"
+      );
 
       setAddresses(Array.isArray(saved) ? saved : []);
     } catch {
@@ -113,7 +121,7 @@ function Profile({
     }
   }, [addressKey, user]);
 
-  // LOAD PHOTO
+  // LOAD PROFILE PHOTO
   useEffect(() => {
     if (!photoKey) {
       setPhoto(user?.profilePhoto || "");
@@ -121,7 +129,9 @@ function Profile({
     }
 
     const savedPhoto =
-      localStorage.getItem(photoKey) || user?.profilePhoto || "";
+      localStorage.getItem(photoKey) ||
+      user?.profilePhoto ||
+      "";
 
     setPhoto(savedPhoto);
   }, [photoKey, user?.profilePhoto]);
@@ -160,14 +170,13 @@ function Profile({
     };
   }, [showLogoutConfirm, showForm, editingField, onClose]);
 
-  // SAVE ADDRESS LIST
+  // SAVE ADDRESSES
   const saveAddresses = (updated) => {
     setAddresses(updated);
-
     localStorage.setItem(addressKey, JSON.stringify(updated));
   };
 
-  // PHOTO UPLOAD
+  // PROFILE PHOTO UPLOAD
   const handlePhotoUpload = (e) => {
     const file = e.target.files?.[0];
 
@@ -207,7 +216,10 @@ function Profile({
 
         setUser?.(updatedUser);
 
-        localStorage.setItem("meesho_user", JSON.stringify(updatedUser));
+        localStorage.setItem(
+          "meesho_user",
+          JSON.stringify(updatedUser)
+        );
 
         saveProfileData(updatedUser);
       } catch (error) {
@@ -220,7 +232,7 @@ function Profile({
     e.target.value = "";
   };
 
-  // OPEN FIELD EDITOR
+  // EDIT PROFILE FIELD
   const handleProfileFieldEdit = (field) => {
     setEditingField(field);
 
@@ -233,7 +245,7 @@ function Profile({
     }
   };
 
-  // SAVE NAME / EMAIL / PHONE
+  // SAVE PROFILE FIELD
   const handleSaveProfileField = () => {
     const value = fieldValue.trim();
 
@@ -251,7 +263,10 @@ function Profile({
       }
     }
 
-    if (editingField === "phone" && !/^[6-9]\d{9}$/.test(value)) {
+    if (
+      editingField === "phone" &&
+      !/^[6-9]\d{9}$/.test(value)
+    ) {
       alert("Please enter a valid 10-digit mobile number.");
       return;
     }
@@ -263,9 +278,10 @@ function Profile({
       [editingField]: value,
     };
 
-    const newEmail = updatedUser.email?.trim().toLowerCase() || "";
+    const newEmail =
+      updatedUser.email?.trim().toLowerCase() || "";
 
-    // MOVE USER DATA WHEN EMAIL CHANGES
+    // MOVE DATA WHEN EMAIL CHANGES
     if (oldEmail && newEmail && oldEmail !== newEmail) {
       const oldProfileKey = getProfileKey(oldEmail);
       const newProfileKey = getProfileKey(newEmail);
@@ -289,11 +305,14 @@ function Profile({
             ...parsedProfile,
             ...updatedUser,
             email: newEmail,
-          }),
+          })
         );
       }
 
-      if (oldAddresses && !localStorage.getItem(newAddressKey)) {
+      if (
+        oldAddresses &&
+        !localStorage.getItem(newAddressKey)
+      ) {
         localStorage.setItem(newAddressKey, oldAddresses);
       }
 
@@ -302,12 +321,13 @@ function Profile({
       }
     }
 
-    // SAVE UPDATED USER SESSION
     setUser?.(updatedUser);
 
-    localStorage.setItem("meesho_user", JSON.stringify(updatedUser));
+    localStorage.setItem(
+      "meesho_user",
+      JSON.stringify(updatedUser)
+    );
 
-    // SAVE UPDATED USER PROFILE PERMANENTLY
     saveProfileData(updatedUser);
 
     setEditingField("");
@@ -363,7 +383,7 @@ function Profile({
 
     const updated = editId
       ? addresses.map((address) =>
-          address.id === editId ? addressData : address,
+          address.id === editId ? addressData : address
         )
       : [...addresses, addressData];
 
@@ -377,9 +397,14 @@ function Profile({
       return;
     }
 
-    let updated = addresses.filter((address) => address.id !== id);
+    let updated = addresses.filter(
+      (address) => address.id !== id
+    );
 
-    if (updated.length > 0 && !updated.some((address) => address.isDefault)) {
+    if (
+      updated.length > 0 &&
+      !updated.some((address) => address.isDefault)
+    ) {
       updated = updated.map((address, index) => ({
         ...address,
         isDefault: index === 0,
@@ -416,7 +441,6 @@ function Profile({
       setUser?.(null);
     }
 
-    // Profile data is NOT deleted here.
     setShowLogoutConfirm(false);
     onClose?.();
   };
@@ -464,7 +488,8 @@ function Profile({
         }
       }}
     >
-      <div className="relative max-h-[94vh] w-full max-w-2xl overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden rounded-3xl bg-white p-5 shadow-2xl sm:p-7">
+      <div className="relative max-h-[94vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-white p-5 shadow-2xl [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:p-7">
+
         {/* HEADER */}
         <div className="mb-6 flex items-center justify-between border-b border-gray-100 pb-4">
           <div>
@@ -488,9 +513,16 @@ function Profile({
 
         {!user ? (
           <div className="py-8 text-center">
-            <div className="mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-full bg-pink-50">
-              <UserRound size={42} className="text-pink-600" />
-            </div>
+
+            {/* MEESHO LOGO INSIDE ROUNDED CIRCLE */}
+           {/* MEESHO LOGO INSIDE ROUNDED CIRCLE */}
+<div className="mx-auto mb-5 flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-2 border-pink-200 bg-[#5B0B4A] shadow-md">
+  <img
+    src="\assets\image.png"
+    alt="Meesho Logo"
+    className="h-full w-full rounded-full object-contain p-1"
+  />
+</div>
 
             <h2 className="text-2xl font-extrabold text-gray-900">
               Welcome to Meesho!
@@ -515,7 +547,9 @@ function Profile({
             <section className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
               <button
                 type="button"
-                onClick={() => setShowAccountDetails((prev) => !prev)}
+                onClick={() =>
+                  setShowAccountDetails((prev) => !prev)
+                }
                 className="flex w-full items-center gap-4 p-5 text-left hover:bg-pink-50/40 sm:p-6"
               >
                 <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-pink-100 bg-pink-50 text-2xl font-extrabold text-pink-600">
@@ -552,7 +586,6 @@ function Profile({
                 )}
               </button>
 
-              {/* ACCOUNT DETAILS */}
               {showAccountDetails && (
                 <div className="border-t border-gray-100 bg-gray-50 p-5 sm:p-6">
                   <h3 className="mb-5 text-lg font-extrabold text-gray-900">
@@ -607,7 +640,7 @@ function Profile({
                     </p>
                   </div>
 
-                  {/* NAME, EMAIL, PHONE */}
+                  {/* PROFILE FIELDS */}
                   {profileFields.map((field) => (
                     <div
                       key={field.key}
@@ -630,7 +663,9 @@ function Profile({
 
                         <button
                           type="button"
-                          onClick={() => handleProfileFieldEdit(field.key)}
+                          onClick={() =>
+                            handleProfileFieldEdit(field.key)
+                          }
                           className="shrink-0 rounded-lg border border-pink-200 px-3 py-2 text-xs font-bold text-pink-600 hover:bg-pink-50"
                         >
                           {field.value ? "Edit" : "Add"}
@@ -646,9 +681,13 @@ function Profile({
                           <input
                             type={field.type}
                             value={fieldValue}
-                            onChange={(e) => setFieldValue(e.target.value)}
+                            onChange={(e) =>
+                              setFieldValue(e.target.value)
+                            }
                             placeholder={field.placeholder}
-                            maxLength={field.key === "phone" ? 10 : undefined}
+                            maxLength={
+                              field.key === "phone" ? 10 : undefined
+                            }
                             className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-pink-500"
                           />
 
@@ -702,7 +741,9 @@ function Profile({
                   </div>
 
                   <div className="min-w-0 flex-1">
-                    <h4 className="font-bold text-gray-900">My Orders</h4>
+                    <h4 className="font-bold text-gray-900">
+                      My Orders
+                    </h4>
                     <p className="mt-1 text-sm text-gray-500">
                       View your order history and details
                     </p>
@@ -724,7 +765,9 @@ function Profile({
                   </div>
 
                   <div className="min-w-0 flex-1">
-                    <h4 className="font-bold text-gray-900">My Wishlist</h4>
+                    <h4 className="font-bold text-gray-900">
+                      My Wishlist
+                    </h4>
                     <p className="mt-1 text-sm text-gray-500">
                       {wishlist.length} saved products
                     </p>
@@ -738,7 +781,9 @@ function Profile({
 
                 <button
                   type="button"
-                  onClick={() => setShowAddressBook((prev) => !prev)}
+                  onClick={() =>
+                    setShowAddressBook((prev) => !prev)
+                  }
                   className="flex w-full items-center gap-4 p-5 text-left hover:bg-pink-50/50"
                 >
                   <div className="rounded-xl bg-blue-50 p-3 text-blue-600">
@@ -746,7 +791,9 @@ function Profile({
                   </div>
 
                   <div className="min-w-0 flex-1">
-                    <h4 className="font-bold text-gray-900">Address Book</h4>
+                    <h4 className="font-bold text-gray-900">
+                      Address Book
+                    </h4>
                     <p className="mt-1 text-sm text-gray-500">
                       {addresses.length} saved address(es)
                     </p>
@@ -784,7 +831,10 @@ function Profile({
 
                     {addresses.length === 0 ? (
                       <div className="rounded-xl border border-dashed border-gray-300 bg-white py-8 text-center">
-                        <MapPin size={32} className="mx-auto text-gray-300" />
+                        <MapPin
+                          size={32}
+                          className="mx-auto text-gray-300"
+                        />
                         <p className="mt-3 font-semibold text-gray-700">
                           No saved addresses yet
                         </p>
@@ -821,9 +871,10 @@ function Profile({
                             </h4>
 
                             <p className="mt-1 text-sm leading-6 text-gray-600">
-                              {address.area}, {address.city}, {address.state} -{" "}
-                              {address.pincode}
-                              {address.landmark && `, Near ${address.landmark}`}
+                              {address.area}, {address.city},{" "}
+                              {address.state} - {address.pincode}
+                              {address.landmark &&
+                                `, Near ${address.landmark}`}
                             </p>
 
                             <p className="mt-2 text-sm font-semibold text-gray-700">
@@ -834,7 +885,9 @@ function Profile({
                               {!address.isDefault && (
                                 <button
                                   type="button"
-                                  onClick={() => handleSetDefault(address.id)}
+                                  onClick={() =>
+                                    handleSetDefault(address.id)
+                                  }
                                   className="text-xs font-bold text-pink-600 hover:underline"
                                 >
                                   Set as Default
@@ -852,7 +905,9 @@ function Profile({
 
                               <button
                                 type="button"
-                                onClick={() => handleDelete(address.id)}
+                                onClick={() =>
+                                  handleDelete(address.id)
+                                }
                                 className="flex items-center gap-1 text-xs font-bold text-red-500 hover:underline"
                               >
                                 <Trash2 size={13} />
@@ -893,7 +948,7 @@ function Profile({
             }
           }}
         >
-          <div className="max-h-[90vh] w-full max-w-xl overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden rounded-2xl bg-white p-5 shadow-2xl sm:p-7">
+          <div className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white p-5 shadow-2xl [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:p-7">
             <div className="mb-5 flex items-center justify-between">
               <h2 className="text-xl font-extrabold text-gray-900">
                 {editId ? "Edit Address" : "Add New Address"}

@@ -1,115 +1,118 @@
-
 import { Link } from "react-router-dom";
 
 function Footer() {
   return (
-    <footer className="bg-gray-50 border-t border-gray-200 text-gray-700">
+    <footer className="w-full border-t border-gray-200 bg-gray-50 text-gray-700">
 
-      {/* Footer Main Section */}
-      <div className="max-w-7xl mx-auto px-6 md:px-10 py-12">
+      {/* FOOTER MAIN SECTION */}
+      <div className="w-full px-4 py-12 sm:px-6 lg:px-10 xl:px-14">
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12">
 
-          {/* Brand */}
+          {/* BRAND */}
           <div>
             <Link
               to="/"
-              className="text-4xl font-extrabold text-pink-600 tracking-tight"
+              className="text-4xl font-extrabold tracking-tight text-pink-600"
             >
               meesho<span className="text-purple-600">.</span>
             </Link>
 
-            <p className="text-gray-500 text-sm leading-7 mt-4 max-w-xs">
+            <p className="mt-4 max-w-xs text-sm leading-7 text-gray-500">
               India's favourite online shopping destination.
               Find something you'll love at a price you'll love.
             </p>
 
-            <p className="text-sm text-gray-500 mt-5">
+            <p className="mt-5 text-sm text-gray-500">
               Shop smart. Shop happy!
             </p>
           </div>
 
-          {/* Shop */}
+          {/* SHOP */}
           <div>
-            <h3 className="text-lg font-bold text-gray-900 mb-5">
+            <h3 className="mb-5 text-lg font-bold text-gray-900">
               Shop
             </h3>
 
             <div className="flex flex-col gap-3 text-sm">
+
               <Link
                 to="/category/Women%20Ethnic"
-                className="hover:text-pink-600 transition-colors"
+                className="transition-colors hover:text-pink-600"
               >
                 Women Ethnic
               </Link>
 
               <Link
                 to="/category/Men"
-                className="hover:text-pink-600 transition-colors"
+                className="transition-colors hover:text-pink-600"
               >
                 Men
               </Link>
 
               <Link
                 to="/category/Kids"
-                className="hover:text-pink-600 transition-colors"
+                className="transition-colors hover:text-pink-600"
               >
                 Kids
               </Link>
 
               <Link
                 to="/category/Home%20%26%20Kitchen"
-                className="hover:text-pink-600 transition-colors"
+                className="transition-colors hover:text-pink-600"
               >
                 Home & Kitchen
               </Link>
+
             </div>
           </div>
 
-          {/* Help */}
+          {/* HELP */}
           <div>
-            <h3 className="text-lg font-bold text-gray-900 mb-5">
+            <h3 className="mb-5 text-lg font-bold text-gray-900">
               Help
             </h3>
 
             <div className="flex flex-col gap-3 text-sm">
+
               <a
                 href="mailto:support@example.com"
-                className="hover:text-pink-600 transition-colors"
+                className="transition-colors hover:text-pink-600"
               >
                 Contact Us
               </a>
 
               <Link
                 to="/"
-                className="hover:text-pink-600 transition-colors"
+                className="transition-colors hover:text-pink-600"
               >
                 Shipping & Returns
               </Link>
 
               <Link
                 to="/"
-                className="hover:text-pink-600 transition-colors"
+                className="transition-colors hover:text-pink-600"
               >
                 FAQs
               </Link>
 
               <Link
                 to="/"
-                className="hover:text-pink-600 transition-colors"
+                className="transition-colors hover:text-pink-600"
               >
                 Privacy Policy
               </Link>
+
             </div>
           </div>
 
-          {/* Connect */}
+          {/* CONNECT */}
           <div>
-            <h3 className="text-lg font-bold text-gray-900 mb-5">
+            <h3 className="mb-5 text-lg font-bold text-gray-900">
               Connect With Us
             </h3>
 
-            <p className="text-sm text-gray-500 leading-6 mb-5">
+            <p className="mb-5 text-sm leading-6 text-gray-500">
               Follow us for the latest trends, fashion updates and offers.
             </p>
 
@@ -120,7 +123,7 @@ function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Facebook"
-                className="w-10 h-10 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center font-bold hover:bg-pink-600 hover:text-white transition-all"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-100 font-bold text-pink-600 transition-all hover:bg-pink-600 hover:text-white"
               >
                 f
               </a>
@@ -130,7 +133,7 @@ function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Instagram"
-                className="w-10 h-10 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center text-lg hover:bg-pink-600 hover:text-white transition-all"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-100 text-lg text-pink-600 transition-all hover:bg-pink-600 hover:text-white"
               >
                 ◎
               </a>
@@ -140,7 +143,7 @@ function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label="YouTube"
-                className="w-10 h-10 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center text-lg hover:bg-pink-600 hover:text-white transition-all"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-100 text-lg text-pink-600 transition-all hover:bg-pink-600 hover:text-white"
               >
                 ▶
               </a>
@@ -151,11 +154,12 @@ function Footer() {
         </div>
       </div>
 
-      {/* Bottom Copyright */}
-      <div className="border-t border-gray-200 bg-white">
-        <div className="max-w-7xl mx-auto px-6 py-5 flex flex-col md:flex-row justify-between items-center gap-3">
+      {/* BOTTOM COPYRIGHT */}
+      <div className="w-full border-t border-gray-200 bg-white">
 
-          <p className="text-sm text-gray-500 text-center">
+        <div className="flex w-full flex-col items-center justify-between gap-3 px-4 py-5 sm:px-6 md:flex-row lg:px-10 xl:px-14">
+
+          <p className="text-center text-sm text-gray-500">
             © 2026 Meesho UI Clone. All rights reserved.
           </p>
 

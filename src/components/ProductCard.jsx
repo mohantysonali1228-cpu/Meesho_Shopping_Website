@@ -141,7 +141,7 @@ function ProductCard({
           onClick={handleCartClick}
           className={`mt-3 h-9 w-full shrink-0 rounded-lg border px-2 text-[11px] font-semibold transition-all duration-200 active:scale-95 sm:h-10 sm:text-xs ${
             isInCart
-              ? "border-red-600 bg-red-600 text-white hover:bg-white hover:text-red-600"
+              ? "border-green-600 bg-green-600 text-white hover:bg-white hover:text-green-600"
               : "border-pink-600 bg-pink-600 text-white hover:bg-white hover:text-pink-600"
           }`}
         >

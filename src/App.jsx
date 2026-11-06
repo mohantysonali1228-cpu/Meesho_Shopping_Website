@@ -18,7 +18,6 @@ import Profile from "./pages/Profile";
 import Order from "./pages/Order";
 import MyOrder from "./pages/MyOrder";
 
-// Read data from localStorage
 const read = (key, fallback) => {
   try {
     const data = localStorage.getItem(key);
@@ -29,119 +28,147 @@ const read = (key, fallback) => {
   }
 };
 
-// Get separate wishlist key for each user
 const getWishlistKey = (user) => {
   if (!user) return "meesho_wishlist_guest";
 
   const identifier =
-    user.email ||
-    user.id ||
-    user._id ||
-    user.phone ||
-    user.username;
+    user.email || user.id || user._id || user.phone || user.username;
 
-  if (!identifier) {
-    return "meesho_wishlist_guest";
-  }
+  if (!identifier) return "meesho_wishlist_guest";
 
-  return `meesho_wishlist_${String(identifier)
+  return `meesho_wishlist_${String(identifier).trim().toLowerCase()}`;
+};
+
+// Permanent profile key for each email
+const getProfileKey = (email) => {
+  return `meesho_profile_${String(email || "")
     .trim()
     .toLowerCase()}`;
+};
+
+// Get phone number from different possible field names
+const getPhone = (user) => {
+  return (
+    user?.phone ||
+    user?.contactNo ||
+    user?.mobile ||
+    user?.mobileNumber ||
+    user?.contact ||
+    ""
+  );
 };
 
 function App() {
   const location = useLocation();
 
-  // Hide footer on Profile, Login and Register
-  const hideFooter = [
-    "/profile",
-    "/login",
-    "/register",
-  ].includes(location.pathname);
+  const [profileOpen, setProfileOpen] = useState(false);
 
-  // User state
-  const [user, setUser] = useState(() =>
-    read("meesho_user", null)
-  );
+  const hideFooter = ["/login", "/register"].includes(location.pathname);
 
-  // Cart state
-  const [cart, setCart] = useState(() =>
-    read("meesho_cart", [])
-  );
+  const [user, setUser] = useState(() => read("meesho_user", null));
 
-  // Wishlist state
+  const [cart, setCart] = useState(() => read("meesho_cart", []));
+
   const [wishlist, setWishlist] = useState(() =>
-    read(
-      getWishlistKey(read("meesho_user", null)),
-      []
-    )
+    read(getWishlistKey(read("meesho_user", null)), []),
   );
 
   // Save cart
   useEffect(() => {
-    localStorage.setItem(
-      "meesho_cart",
-      JSON.stringify(cart)
-    );
+    localStorage.setItem("meesho_cart", JSON.stringify(cart));
   }, [cart]);
 
-  // Save wishlist for active user
+  // Save wishlist
   useEffect(() => {
-    localStorage.setItem(
-      getWishlistKey(user),
-      JSON.stringify(wishlist)
-    );
+    localStorage.setItem(getWishlistKey(user), JSON.stringify(wishlist));
   }, [wishlist, user]);
 
-  // Save logged-in user
+  // Save active login user
   useEffect(() => {
     if (user) {
-      localStorage.setItem(
-        "meesho_user",
-        JSON.stringify(user)
-      );
+      localStorage.setItem("meesho_user", JSON.stringify(user));
     } else {
       localStorage.removeItem("meesho_user");
     }
   }, [user]);
 
-  // Login / Register handler
-  const handleSetUser = (newUser) => {
-    const loggedInUser =
-      typeof newUser === "function"
-        ? newUser(user)
-        : newUser;
+  // Save profile separately from login session
+  const savePermanentProfile = (profile) => {
+    const email = profile?.email?.trim().toLowerCase();
 
-    setUser(loggedInUser);
+    if (!email) return;
 
-    // Load only this user's wishlist
-    setWishlist(
-      read(getWishlistKey(loggedInUser), [])
-    );
+    const profileData = {
+      name: profile.name || "",
+      email: profile.email || "",
+      phone: getPhone(profile),
+      profilePhoto: profile.profilePhoto || "",
+    };
+
+    localStorage.setItem(getProfileKey(email), JSON.stringify(profileData));
   };
 
-  // Logout
+  // LOGIN / REGISTER / PROFILE UPDATE
+  const handleSetUser = (newUser) => {
+    const incomingUser =
+      typeof newUser === "function" ? newUser(user) : newUser;
+
+    if (!incomingUser) {
+      setUser(null);
+      return;
+    }
+
+    const email = incomingUser.email?.trim().toLowerCase() || "";
+
+    // Read previously saved profile
+    const savedProfile = email ? read(getProfileKey(email), {}) : {};
+
+    // Merge login data with saved profile
+    const updatedUser = {
+      ...savedProfile,
+      ...incomingUser,
+
+      name: incomingUser.name?.trim() || savedProfile.name || "",
+
+      email: incomingUser.email || savedProfile.email || "",
+
+      phone: getPhone(incomingUser) || savedProfile.phone || "",
+
+      profilePhoto:
+        incomingUser.profilePhoto || savedProfile.profilePhoto || "",
+    };
+
+    setUser(updatedUser);
+
+    setWishlist(read(getWishlistKey(updatedUser), []));
+
+    // Save login session
+    localStorage.setItem("meesho_user", JSON.stringify(updatedUser));
+
+    // Save permanent profile
+    savePermanentProfile(updatedUser);
+  };
+
+  // LOGOUT
   const handleLogout = () => {
-    // Clear cart
     setCart([]);
     localStorage.removeItem("meesho_cart");
 
-    // Load guest wishlist
-    setWishlist(
-      read("meesho_wishlist_guest", [])
-    );
+    setWishlist(read("meesho_wishlist_guest", []));
 
-    // Logout user
+    // Remove only active session.
+    // Do not remove permanent profile data.
     setUser(null);
+    localStorage.removeItem("meesho_user");
+
+    setProfileOpen(false);
   };
 
-  // Add product to cart
-  // Also remove the same product from wishlist
+  // ADD TO CART
   const addToCart = (product, qty = 1) => {
     setCart((oldCart) => {
       const existing = oldCart.find(
-        (item) =>
-          String(item.id) === String(product.id)
+        (item) => String(item.id) === String(product.id),
       );
 
       if (existing) {
@@ -151,60 +178,49 @@ function App() {
                 ...item,
                 qty: (item.qty || 1) + qty,
               }
-            : item
+            : item,
         );
       }
 
       return [...oldCart, { ...product, qty }];
     });
 
-    // Remove from current user's wishlist
     setWishlist((oldWishlist) =>
-      oldWishlist.filter(
-        (item) =>
-          String(item.id) !== String(product.id)
-      )
+      oldWishlist.filter((item) => String(item.id) !== String(product.id)),
     );
   };
 
-  // Change cart quantity
+  // CHANGE CART QUANTITY
   const changeQty = (id, delta) => {
     setCart((oldCart) =>
       oldCart.map((item) =>
         String(item.id) === String(id)
           ? {
               ...item,
-              qty: Math.max(
-                1,
-                (item.qty || 1) + delta
-              ),
+              qty: Math.max(1, (item.qty || 1) + delta),
             }
-          : item
-      )
+          : item,
+      ),
     );
   };
 
-  // Remove product from cart
+  // REMOVE FROM CART
   const removeCart = (id) => {
     setCart((oldCart) =>
-      oldCart.filter(
-        (item) => String(item.id) !== String(id)
-      )
+      oldCart.filter((item) => String(item.id) !== String(id)),
     );
   };
 
-  // Add or remove wishlist product
+  // WISHLIST TOGGLE
   const toggleWish = (product) => {
     setWishlist((oldWishlist) => {
       const exists = oldWishlist.some(
-        (item) =>
-          String(item.id) === String(product.id)
+        (item) => String(item.id) === String(product.id),
       );
 
       if (exists) {
         return oldWishlist.filter(
-          (item) =>
-            String(item.id) !== String(product.id)
+          (item) => String(item.id) !== String(product.id),
         );
       }
 
@@ -212,7 +228,6 @@ function App() {
     });
   };
 
-  // Shared props
   const shared = {
     cart,
     setCart,
@@ -228,86 +243,44 @@ function App() {
 
   return (
     <>
-      {/* Navbar always visible */}
-      <Header {...shared} />
+      <Header {...shared} onProfileClick={() => setProfileOpen(true)} />
 
       <ScrollToTop />
 
       <Routes>
-        {/* Home */}
-        <Route
-          path="/"
-          element={<Home {...shared} />}
-        />
+        <Route path="/" element={<Home {...shared} />} />
 
-        {/* Category */}
-        <Route
-          path="/category/:category"
-          element={<Listing {...shared} />}
-        />
+        <Route path="/category/:category" element={<Listing {...shared} />} />
 
-        {/* Product Details */}
-        <Route
-          path="/product/:id"
-          element={<ProductDetails {...shared} />}
-        />
+        <Route path="/product/:id" element={<ProductDetails {...shared} />} />
 
-        {/* Cart */}
-        <Route
-          path="/cart"
-          element={<Cart {...shared} />}
-        />
+        <Route path="/cart" element={<Cart {...shared} />} />
 
-        {/* Wishlist */}
-        <Route
-          path="/wishlist"
-          element={<Wishlist {...shared} />}
-        />
+        <Route path="/wishlist" element={<Wishlist {...shared} />} />
 
-        {/* Login */}
-        <Route
-          path="/login"
-          element={<Login setUser={handleSetUser} />}
-        />
+        <Route path="/login" element={<Login setUser={handleSetUser} />} />
 
-        {/* Register */}
         <Route
           path="/register"
           element={<Register setUser={handleSetUser} />}
         />
 
-        {/* Profile */}
-        <Route
-          path="/profile"
-          element={<Profile {...shared} />}
-        />
+        <Route path="/my-orders" element={<MyOrder />} />
 
-        {/* My Orders */}
-        <Route
-          path="/my-orders"
-          element={<MyOrder />}
-        />
-
-        {/* Checkout */}
         <Route
           path="/order"
-          element={
-            <Order
-              cart={cart}
-              removeCart={removeCart}
-            />
-          }
+          element={<Order cart={cart} removeCart={removeCart} />}
         />
 
-        {/* Page Not Found */}
-        <Route
-          path="*"
-          element={<Home {...shared} />}
-        />
+        <Route path="*" element={<Home {...shared} />} />
       </Routes>
 
-      {/* Footer hidden on Profile, Login and Register */}
       {!hideFooter && <Footer />}
+
+      {/* PROFILE MODAL */}
+      {profileOpen && (
+        <Profile {...shared} onClose={() => setProfileOpen(false)} />
+      )}
     </>
   );
 }
